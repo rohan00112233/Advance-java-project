@@ -9,9 +9,7 @@ import util.DBConnection;
 
 public class UserDAO {
 
-    // Check username and password in the database.
-    // If the credentials are correct,
-    // return the complete User object.
+    // Login method
     public User login(String username, String password) {
 
         User user = null;
@@ -21,21 +19,18 @@ public class UserDAO {
 
         try {
 
-            Connection connection = DBConnection.getConnection();
+            Connection connection =
+                    DBConnection.getConnection();
 
             PreparedStatement preparedStatement =
                     connection.prepareStatement(sql);
 
-            // Set username.
             preparedStatement.setString(1, username);
-
-            // Set password.
             preparedStatement.setString(2, password);
 
             ResultSet resultSet =
                     preparedStatement.executeQuery();
 
-            // If a matching account is found.
             if (resultSet.next()) {
 
                 user = new User(
@@ -46,7 +41,6 @@ public class UserDAO {
                 );
             }
 
-            // Close resources.
             resultSet.close();
             preparedStatement.close();
             connection.close();
@@ -57,5 +51,53 @@ public class UserDAO {
         }
 
         return user;
+    }
+
+
+    // Registration method
+    public boolean register(
+            String username,
+            String password,
+            String role) {
+
+        String sql =
+                "INSERT INTO users (username, password, role) VALUES (?, ?, ?)";
+
+        try {
+
+            Connection connection =
+                    DBConnection.getConnection();
+
+            PreparedStatement preparedStatement =
+                    connection.prepareStatement(sql);
+
+            preparedStatement.setString(1, username);
+            preparedStatement.setString(2, password);
+            preparedStatement.setString(3, role);
+
+            int rows =
+                    preparedStatement.executeUpdate();
+
+            preparedStatement.close();
+            connection.close();
+
+            /*
+             * If one row was inserted successfully,
+             * registration was successful.
+             */
+            return rows > 0;
+
+        } catch (Exception e) {
+
+            /*
+             * Print the REAL database error in Eclipse console.
+             *
+             * This is important because a registration failure
+             * does not always mean that the username already exists.
+             */
+            e.printStackTrace();
+
+            return false;
+        }
     }
 }
