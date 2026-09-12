@@ -1,116 +1,176 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
-
 <%@ page import="java.util.List" %>
 <%@ page import="model.CartItem" %>
 
 <!DOCTYPE html>
 <html>
-
 <head>
-
     <meta charset="UTF-8">
-
-    <title>My Cart</title>
+    <title>Shopping Cart</title>
 
     <style>
 
+        /* Page */
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            padding: 30px;
+            background-color: #f4f6f8;
+            margin: 0;
+            padding: 0;
         }
 
-        h1 {
+        /* Header */
+        .header {
+            background-color: #222;
+            color: white;
             text-align: center;
+            padding: 25px;
         }
 
-        .cart-container {
-            width: 80%;
-            margin: auto;
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 8px gray;
+        .header h1 {
+            margin: 0;
         }
 
-        table {
+        /* Main container */
+        .container {
+            width: 90%;
+            max-width: 1000px;
+            margin: 50px auto;
+        }
+
+        .container h2 {
+            text-align: center;
+            font-size: 36px;
+            color: #222;
+            margin-bottom: 30px;
+        }
+
+        /* Cart table */
+        .cart-table {
             width: 100%;
             border-collapse: collapse;
+            background-color: white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            border-radius: 10px;
+            overflow: hidden;
         }
 
-        th,
-        td {
-            padding: 12px;
-            text-align: center;
-            border: 1px solid #ddd;
-        }
-
-        th {
-            background-color: #007bff;
+        .cart-table th {
+            background-color: #222;
             color: white;
+            padding: 15px;
+            font-size: 17px;
         }
 
-        .total {
+        .cart-table td {
+            padding: 15px;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+            font-size: 16px;
+        }
+
+        .cart-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .cart-table tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        /* Grand total */
+        .grand-total {
+            background-color: white;
+            margin-top: 25px;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
             text-align: right;
-            font-size: 20px;
+            font-size: 24px;
             font-weight: bold;
-            margin-top: 20px;
+        }
+
+        /* Navigation */
+        .navigation {
+            text-align: center;
+            margin-top: 30px;
         }
 
         .button {
             display: inline-block;
-            padding: 10px 15px;
-            margin-top: 20px;
-            background-color: #007bff;
+            padding: 12px 22px;
+            margin: 5px;
+            background-color: #087ff5;
             color: white;
             text-decoration: none;
-            border-radius: 5px;
+            border-radius: 6px;
+            font-size: 17px;
         }
 
         .button:hover {
-            background-color: #0056b3;
+            background-color: #0668c9;
+        }
+
+        .home-button {
+            background-color: #555;
+        }
+
+        .home-button:hover {
+            background-color: #333;
+        }
+
+        /* Empty cart */
+        .empty-cart {
+            background-color: white;
+            padding: 35px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            text-align: center;
+            font-size: 20px;
         }
 
     </style>
-
 </head>
 
 <body>
 
-    <h1>My Cart</h1>
+    <!-- Header -->
+    <div class="header">
+        <h1>Food Ordering Management System</h1>
+    </div>
 
-    <div class="cart-container">
+    <!-- Main content -->
+    <div class="container">
+
+        <h2>Your Cart</h2>
 
         <%
-            // Retrieve the cart from the user's session.
             List<CartItem> cart =
                     (List<CartItem>) request.getAttribute("cart");
-
-            // Store the total cart amount.
-            double grandTotal = 0;
-
-            // Check whether the cart contains items.
-            if (cart != null && !cart.isEmpty()) {
         %>
-
-                <table>
-
-                    <tr>
-                        <th>Food Name</th>
-                        <th>Category</th>
-                        <th>Price</th>
-                        <th>Quantity</th>
-                        <th>Total Price</th>
-                    </tr>
 
         <%
-                // Loop through every cart item.
-                for (CartItem cartItem : cart) {
+            if (cart != null && !cart.isEmpty()) {
 
-                    // Add the current item's total price to grand total.
-                    grandTotal = grandTotal + cartItem.getTotalPrice();
+                double grandTotal = 0;
         %>
+
+            <!-- Cart table -->
+            <table class="cart-table">
+
+                <tr>
+                    <th>Food Name</th>
+                    <th>Category</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Total Price</th>
+                </tr>
+
+                <%
+                    for (CartItem cartItem : cart) {
+
+                        double totalPrice =
+                                cartItem.getTotalPrice();
+
+                        grandTotal += totalPrice;
+                %>
 
                     <tr>
 
@@ -131,38 +191,47 @@
                         </td>
 
                         <td>
-                            ₹<%= cartItem.getTotalPrice() %>
+                            ₹<%= totalPrice %>
                         </td>
 
                     </tr>
 
-        <%
-                }
-        %>
+                <%
+                    }
+                %>
 
-                </table>
+            </table>
 
-                <div class="total">
-                    Grand Total: ₹<%= grandTotal %>
-                </div>
+            <!-- Grand total -->
+            <div class="grand-total">
+                Grand Total: Rs<%= grandTotal %>
+            </div>
 
         <%
             } else {
         %>
 
-                <h2>Your cart is empty.</h2>
+            <!-- Empty cart -->
+            <div class="empty-cart">
+
+                <p>Your cart is empty.</p>
+
+            </div>
 
         <%
             }
         %>
 
-        <!-- Return to the food menu. -->
-        <a href="user-food" class="button">
-            Back to Menu
-        </a>
+        <!-- Navigation -->
+        <div class="navigation">
+
+            <a href="index.jsp" class="button home-button">
+                Home
+            </a>
+
+        </div>
 
     </div>
 
 </body>
-
 </html>

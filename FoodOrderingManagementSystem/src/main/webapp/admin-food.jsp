@@ -1,183 +1,259 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
-
 <%@ page import="java.util.List" %>
 <%@ page import="model.Food" %>
 
 <!DOCTYPE html>
 <html>
-
 <head>
-
     <meta charset="UTF-8">
-
     <title>Admin Food Management</title>
 
     <style>
 
+        /* Page */
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            padding: 30px;
+            background-color: #f4f6f8;
+            margin: 0;
+            padding: 0;
         }
 
-        h1 {
+        /* Header */
+        .header {
+            background-color: #222;
+            color: white;
             text-align: center;
+            padding: 25px;
         }
 
+        .header h1 {
+            margin: 0;
+        }
+
+        /* Main container */
         .container {
             width: 90%;
-            margin: auto;
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 8px gray;
+            max-width: 1100px;
+            margin: 45px auto;
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-
-        th,
-        td {
-            padding: 12px;
+        .container h2 {
             text-align: center;
-            border: 1px solid #ddd;
+            font-size: 36px;
+            color: #222;
+            margin-bottom: 30px;
         }
 
-        th {
-            background-color: #007bff;
-            color: white;
+        /* Top navigation */
+        .navigation {
+            text-align: center;
+            margin-bottom: 30px;
         }
 
         .button {
             display: inline-block;
-            padding: 8px 12px;
-            margin: 3px;
-            background-color: #007bff;
+            padding: 12px 22px;
+            margin: 5px;
+            background-color: #087ff5;
             color: white;
             text-decoration: none;
-            border-radius: 5px;
+            border-radius: 6px;
+            font-size: 17px;
         }
 
         .button:hover {
-            background-color: #0056b3;
+            background-color: #0668c9;
         }
 
         .add-button {
-            background-color: green;
+            background-color: #008000;
         }
 
+        .add-button:hover {
+            background-color: #006400;
+        }
+
+        .home-button {
+            background-color: #555;
+        }
+
+        .home-button:hover {
+            background-color: #333;
+        }
+
+        /* Food table */
+        .food-table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .food-table th {
+            background-color: #222;
+            color: white;
+            padding: 15px;
+            font-size: 17px;
+        }
+
+        .food-table td {
+            padding: 14px;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+            font-size: 16px;
+        }
+
+        .food-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .food-table tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        /* Update button */
+        .update-button {
+            background-color: #f39c12;
+            padding: 8px 14px;
+            font-size: 15px;
+        }
+
+        .update-button:hover {
+            background-color: #d68910;
+        }
+
+        /* Delete button */
         .delete-button {
-            background-color: red;
+            background-color: #d9534f;
+            padding: 8px 14px;
+            font-size: 15px;
         }
 
         .delete-button:hover {
-            background-color: darkred;
+            background-color: #c9302c;
+        }
+
+        /* No food message */
+        .no-food {
+            background-color: white;
+            padding: 30px;
+            text-align: center;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            font-size: 20px;
         }
 
     </style>
-
 </head>
 
 <body>
 
-    <h1>Admin Food Management</h1>
+    <!-- Header -->
+    <div class="header">
+        <h1>Food Ordering Management System</h1>
+    </div>
 
+    <!-- Main content -->
     <div class="container">
 
-        <!-- Link to the Add Food page. -->
-        <a href="add-food.jsp" class="button add-button">
-            Add New Food
-        </a>
+        <h2>Admin Food Management</h2>
 
-        <table>
+        <!-- Navigation -->
+        <div class="navigation">
 
-            <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Category</th>
-                <th>Price</th>
-                <th>Availability</th>
-                <th>Actions</th>
-            </tr>
+            <a href="add-food.jsp" class="button add-button">
+                + Add New Food
+            </a>
 
-            <%
-                // Retrieve the food list sent by AdminFoodServlet.
-                List<Food> foodList =
-                        (List<Food>) request.getAttribute("foodList");
+            <a href="index.jsp" class="button home-button">
+                Home
+            </a>
 
-                // Check whether food items are available.
-                if (foodList != null && !foodList.isEmpty()) {
+        </div>
 
-                    // Loop through every food item.
+        <%
+            List<Food> foodList =
+                    (List<Food>) request.getAttribute("foodList");
+        %>
+
+        <%
+            if (foodList != null && !foodList.isEmpty()) {
+        %>
+
+            <!-- Food table -->
+            <table class="food-table">
+
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Category</th>
+                    <th>Price</th>
+                    <th>Availability</th>
+                    <th>Actions</th>
+                </tr>
+
+                <%
                     for (Food food : foodList) {
-            %>
-
-                        <tr>
-
-                            <td>
-                                <%= food.getId() %>
-                            </td>
-
-                            <td>
-                                <%= food.getName() %>
-                            </td>
-
-                            <td>
-                                <%= food.getCategory() %>
-                            </td>
-
-                            <td>
-                                ₹<%= food.getPrice() %>
-                            </td>
-
-                            <td>
-                                <%= food.getAvailability() %>
-                            </td>
-
-                            <td>
-
-                                <!-- Link to update the selected food item. -->
-                                <a
-                                    href="edit-food?id=<%= food.getId() %>"
-                                    class="button">
-                                    Update
-                                </a>
-
-                                <!-- Link to delete the selected food item. -->
-                                <a
-                                    href="delete-food?id=<%= food.getId() %>"
-                                    class="button delete-button">
-                                    Delete
-                                </a>
-
-                            </td>
-
-                        </tr>
-
-            <%
-                    }
-
-                } else {
-            %>
+                %>
 
                     <tr>
-                        <td colspan="6">
-                            No food items available.
+
+                        <td>
+                            <%= food.getId() %>
                         </td>
+
+                        <td>
+                            <%= food.getName() %>
+                        </td>
+
+                        <td>
+                            <%= food.getCategory() %>
+                        </td>
+
+                        <td>
+                            Rs<%= food.getPrice() %>
+                        </td>
+
+                        <td>
+                            <%= food.getAvailability() %>
+                        </td>
+
+                        <td>
+
+                            <a href="edit-food?id=<%= food.getId() %>"
+                               class="button update-button">
+                                Update
+                            </a>
+
+                            <a href="delete-food?id=<%= food.getId() %>"
+                               class="button delete-button">
+                                Delete
+                            </a>
+
+                        </td>
+
                     </tr>
 
-            <%
-                }
-            %>
+                <%
+                    }
+                %>
 
-        </table>
+            </table>
+
+        <%
+            } else {
+        %>
+
+            <div class="no-food">
+                No food items are currently available.
+            </div>
+
+        <%
+            }
+        %>
 
     </div>
 
 </body>
-
 </html>

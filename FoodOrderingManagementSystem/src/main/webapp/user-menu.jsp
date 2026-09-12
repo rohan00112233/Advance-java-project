@@ -1,156 +1,212 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
-
-<%@ page import="java.util.List" %>
-<%@ page import="model.Food" %>
+<%@ page import="java.util.List"%>
+<%@ page import="model.Food"%>
 
 <!DOCTYPE html>
 <html>
-
 <head>
+<meta charset="UTF-8">
+<title>Food Menu</title>
 
-    <meta charset="UTF-8">
+<style>
 
-    <title>Food Menu</title>
+/* Page */
+body {
+	font-family: Arial, sans-serif;
+	background-color: #f4f6f8;
+	margin: 0;
+	padding: 0;
+}
 
-    <style>
+/* Header */
+.header {
+	background-color: #222;
+	color: white;
+	text-align: center;
+	padding: 25px;
+}
 
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 20px;
-        }
+.header h1 {
+	margin: 0;
+}
 
-        h1 {
-            text-align: center;
-        }
+/* Main container */
+.container {
+	width: 90%;
+	max-width: 1100px;
+	margin: 40px auto;
+	text-align: center;
+}
 
-        .food-container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 20px;
-        }
+.container h2 {
+	font-size: 36px;
+	margin-bottom: 25px;
+	color: #222;
+}
 
-        .food-card {
-            background-color: white;
-            width: 250px;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 8px gray;
-        }
+/* Navigation buttons */
+.navigation {
+	margin-bottom: 35px;
+}
 
-        .food-card h2 {
-            margin-top: 0;
-        }
+.nav-button {
+	display: inline-block;
+	padding: 12px 25px;
+	margin: 5px;
+	background-color: #008000;
+	color: white;
+	text-decoration: none;
+	border-radius: 6px;
+	font-size: 18px;
+}
 
-        .food-card p {
-            margin: 10px 0;
-        }
+.nav-button:hover {
+	background-color: #006400;
+}
 
-        .button {
-            display: inline-block;
-            padding: 10px;
-            margin-top: 10px;
-            background-color: #007bff;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-        }
+/* Food cards */
+.food-container {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 25px;
+}
 
-        .button:hover {
-            background-color: #0056b3;
-        }
+.food-card {
+	background-color: white;
+	width: 300px;
+	padding: 25px;
+	border-radius: 10px;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+	text-align: left;
+}
 
-        .cart-button {
-            display: block;
-            width: 120px;
-            margin: 20px auto;
-            padding: 12px;
-            text-align: center;
-            background-color: green;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-        }
+.food-card h3 {
+	font-size: 28px;
+	margin-top: 0;
+	margin-bottom: 20px;
+	color: #222;
+}
 
-    </style>
+.food-info {
+	font-size: 17px;
+	line-height: 1.8;
+}
 
+.food-info strong {
+	color: #222;
+}
+
+/* Food buttons */
+.button-container {
+	margin-top: 20px;
+}
+
+.button {
+	display: inline-block;
+	padding: 10px 14px;
+	margin-right: 5px;
+	background-color: #087ff5;
+	color: white;
+	text-decoration: none;
+	border-radius: 6px;
+	font-size: 16px;
+}
+
+.button:hover {
+	background-color: #0668c9;
+}
+
+/* Message when no food is available */
+.no-food {
+	background-color: white;
+	padding: 25px;
+	border-radius: 10px;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+	font-size: 20px;
+}
+</style>
 </head>
 
 <body>
 
-    <h1>Available Food Items</h1>
+	<!-- Header -->
+	<div class="header">
+		<h1>Food Ordering Management System</h1>
+	</div>
 
-    <!-- Link to view the user's cart. -->
-    <a href="cart" class="cart-button">View Cart</a>
+	<!-- Main content -->
+	<div class="container">
 
-    <div class="food-container">
+		<h2>Available Food Items</h2>
 
-        <%
-            // Retrieve the food list sent by UserFoodServlet.
-            List<Food> foodList =
-                    (List<Food>) request.getAttribute("foodList");
+		<!-- Navigation -->
+		<div class="navigation">
 
-            // Check whether food items are available.
-            if (foodList != null && !foodList.isEmpty()) {
+			<a href="cart" class="nav-button"> View Cart </a> <a href="index.jsp"
+				class="nav-button"> Home </a>
 
-                // Loop through every food item.
-                for (Food food : foodList) {
-        %>
+		</div>
 
-                    <div class="food-card">
+		<%
+		List<Food> foodList = (List<Food>) request.getAttribute("foodList");
+		%>
 
-                        <h2>
-                            <%= food.getName() %>
-                        </h2>
+		<div class="food-container">
 
-                        <p>
-                            <strong>Category:</strong>
-                            <%= food.getCategory() %>
-                        </p>
+			<%
+			if (foodList != null && !foodList.isEmpty()) {
 
-                        <p>
-                            <strong>Price:</strong>
-                            ₹<%= food.getPrice() %>
-                        </p>
+				for (Food food : foodList) {
+			%>
 
-                        <p>
-                            <strong>Availability:</strong>
-                            <%= food.getAvailability() %>
-                        </p>
+			<div class="food-card">
 
-                        <!-- Link to view complete food details. -->
-                        <a
-                            href="food-details?id=<%= food.getId() %>"
-                            class="button">
-                            View Details
-                        </a>
+				<h3>
+					<%=food.getName()%>
+				</h3>
 
-                        <!-- Link to add this food item to the cart. -->
-                        <a
-                            href="add-cart?id=<%= food.getId() %>"
-                            class="button">
-                            Add to Cart
-                        </a>
+				<div class="food-info">
 
-                    </div>
+					<p>
+						<strong>Category:</strong>
+						<%=food.getCategory()%>
+					</p>
 
-        <%
-                }
+					<p>
+						<strong>Price:</strong> ₹<%=food.getPrice()%>
+					</p>
 
-            } else {
-        %>
+					<p>
+						<strong>Availability:</strong>
+						<%=food.getAvailability()%>
+					</p>
 
-                <h2>No food items available.</h2>
+				</div>
 
-        <%
-            }
-        %>
+				<div class="button-container">
 
-    </div>
+					<a href="add-cart?id=<%=food.getId()%>" class="button"> Add
+						to Cart </a>
+
+				</div>
+
+			</div>
+
+			<%
+			}
+
+			} else {
+			%>
+
+			<div class="no-food">No food items are currently available.</div>
+
+			<%
+			}
+			%>
+
+		</div>
+
+	</div>
 
 </body>
-
 </html>
