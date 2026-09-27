@@ -10,6 +10,7 @@ import util.DBConnection;
 public class UserDAO {
 
     // Login method
+    // Checks username and password in the users table.
     public User login(String username, String password) {
 
         User user = null;
@@ -31,6 +32,7 @@ public class UserDAO {
             ResultSet resultSet =
                     preparedStatement.executeQuery();
 
+            // If matching username and password are found.
             if (resultSet.next()) {
 
                 user = new User(
@@ -54,11 +56,51 @@ public class UserDAO {
     }
 
 
-    // Registration method
-    public boolean register(
-            String username,
-            String password,
-            String role) {
+    // Check whether a username already exists.
+    public boolean usernameExists(String username) {
+
+        boolean exists = false;
+
+        String sql =
+                "SELECT id FROM users WHERE username = ?";
+
+        try {
+
+            Connection connection =
+                    DBConnection.getConnection();
+
+            PreparedStatement preparedStatement =
+                    connection.prepareStatement(sql);
+
+            preparedStatement.setString(1, username);
+
+            ResultSet resultSet =
+                    preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+
+                exists = true;
+            }
+
+            resultSet.close();
+            preparedStatement.close();
+            connection.close();
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+        }
+
+        return exists;
+    }
+
+
+    // Register a new user.
+    // Every user registered through the website
+    // will automatically receive the USER role.
+    public boolean register(User user) {
+
+        boolean registered = false;
 
         String sql =
                 "INSERT INTO users (username, password, role) VALUES (?, ?, ?)";
@@ -71,33 +113,38 @@ public class UserDAO {
             PreparedStatement preparedStatement =
                     connection.prepareStatement(sql);
 
-            preparedStatement.setString(1, username);
-            preparedStatement.setString(2, password);
-            preparedStatement.setString(3, role);
+            preparedStatement.setString(
+                    1,
+                    user.getUsername()
+            );
+
+            preparedStatement.setString(
+                    2,
+                    user.getPassword()
+            );
+
+            // Do not allow users to choose their role.
+            preparedStatement.setString(
+                    3,
+                    "USER"
+            );
 
             int rows =
                     preparedStatement.executeUpdate();
 
+            if (rows > 0) {
+
+                registered = true;
+            }
+
             preparedStatement.close();
             connection.close();
 
-            /*
-             * If one row was inserted successfully,
-             * registration was successful.
-             */
-            return rows > 0;
-
         } catch (Exception e) {
 
-            /*
-             * Print the REAL database error in Eclipse console.
-             *
-             * This is important because a registration failure
-             * does not always mean that the username already exists.
-             */
             e.printStackTrace();
-
-            return false;
         }
+
+        return registered;
     }
 }
